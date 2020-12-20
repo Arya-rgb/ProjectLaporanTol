@@ -4,9 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/viewPdf"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".DashboardActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bank BRI"
+        android:textSize="30sp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Masukan Jumlah Total"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Jumlah Transaksi"/>
+
 
     <TextView
         android:id="@+id/user_nik"
@@ -26,6 +42,12 @@
         android:layout_height="wrap_content"
         android:text="nama"
         android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/exportpdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Export Pff"/>
 
 
 </LinearLayout>

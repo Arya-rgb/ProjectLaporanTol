@@ -3,25 +3,35 @@ package com.thorin.project1.laporantol
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.thorin.project1.laporantol.menu.HistoryActivity
 import com.thorin.project1.laporantol.menu.SetActivity
 import kotlinx.android.synthetic.main.activity_dashboard.*
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 class DashboardActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        val pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
+        var pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
         pref.getString("nik", null)
         pref.getString("nama_user", null)
         user_nik.text = pref.getString("nik", null)
@@ -32,13 +42,18 @@ class DashboardActivity : AppCompatActivity() {
         val date = formatter.format(today)
         id_date.text = date
 
+
+        val bClickMe = findViewById<Button>(R.id.exportpdf)
+        bClickMe.setOnClickListener { pref.getString("nama_user", null)?.let { createPdf(it) } }
+
     }
+
     override fun onBackPressed() {
         this@DashboardActivity.moveTaskToBack(true)
     }
-    
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_history -> {
                 val moveIntent = Intent(this, HistoryActivity::class.java)
                 startActivity(moveIntent)
@@ -60,21 +75,16 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun clearAppData() {
-        try
-        {
+        try {
             // clearing app data
-            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT)
-            {
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
                 (getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() // note: it has a return value!
-            }
-            else
-            {
+            } else {
                 val packageName = applicationContext.packageName
                 val runtime = Runtime.getRuntime()
                 runtime.exec("pm clear $packageName")
             }
-        }
-        catch (e:Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -82,9 +92,11 @@ class DashboardActivity : AppCompatActivity() {
     private fun logOutVerification() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Apakah anda yakin ?")
-        builder.setMessage("""
+        builder.setMessage(
+            """
             Anda akan keluar aplikasi setelah logout !
-        """.trimIndent())
+        """.trimIndent()
+        )
         builder.setPositiveButton("Ya") { _, _ ->
             clearAppData()
         }
@@ -95,5 +107,49 @@ class DashboardActivity : AppCompatActivity() {
         alert.show()
     }
 
+    private fun createPdf(namaUser: String) {
+        val today = Calendar.getInstance().time//getting date
+        val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
+        val dateLaporan = formatter.format(today)
+        // create a new document
+        val document = PdfDocument()
+        // crate a page description
+        var pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        // start a page
+        var page = document.startPage(pageInfo)
+        var canvas = page.getCanvas()
+        var paint = Paint()
+        canvas.drawText(namaUser, 80F, 50F, paint)
+        canvas.drawText(user_nik.text as String, 80F, 70F, paint)
+        //canvas.drawt
+        // finish the page
+        document.finishPage(page)
+        // draw text on the graphics object of the page
+        // Create Page 2
+        pageInfo = PdfDocument.PageInfo.Builder(300, 600, 2).create()
+        page = document.startPage(pageInfo)
+        canvas = page.getCanvas()
+        paint = Paint()
+        paint.color = Color.BLUE
+        canvas.drawCircle(100F, 100F, 100F, paint)
+        document.finishPage(page)
+        // write the document content
+        val directory_path = Environment.getExternalStorageDirectory().path + "/laporanpdf/"
+        val file = File(directory_path)
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        val targetPdf = directory_path + "Laporan-$dateLaporan.pdf"
+        val filePath = File(targetPdf)
+        try {
+            document.writeTo(FileOutputStream(filePath))
+            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            Log.e("main", "error $e")
+            Toast.makeText(this, "Something wrong: $e", Toast.LENGTH_LONG).show()
+        }
+        // close the document
+        document.close()
+    }
 
 }
