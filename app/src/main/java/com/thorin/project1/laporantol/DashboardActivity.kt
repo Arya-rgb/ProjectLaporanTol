@@ -6,13 +6,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -37,14 +37,16 @@ class DashboardActivity : AppCompatActivity() {
         user_nik.text = pref.getString("nik", null)
         user_nama.text = pref.getString("nama_user", null)
 
-        val today = Calendar.getInstance().time//getting date
-        val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
-        val date = formatter.format(today)
+        var today = Calendar.getInstance().time//getting date
+        var formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
+        var date = formatter.format(today)
         id_date.text = date
 
 
         val bClickMe = findViewById<Button>(R.id.exportpdf)
-        bClickMe.setOnClickListener { pref.getString("nama_user", null)?.let { createPdf(it) } }
+        bClickMe.setOnClickListener { pref.getString("nama_user", null)?.let { createPdf(it) }
+            openFileOption()
+        }
 
     }
 
@@ -120,19 +122,16 @@ class DashboardActivity : AppCompatActivity() {
         var canvas = page.getCanvas()
         var paint = Paint()
         canvas.drawText(namaUser, 80F, 50F, paint)
-        canvas.drawText(user_nik.text as String, 80F, 70F, paint)
+        canvas.drawText("""
+            Nik User = ${user_nik.text as String} 
+            
+            Tanggal Sekarang = $dateLaporan
+        """.trimIndent(), 80F, 70F, paint)
         //canvas.drawt
         // finish the page
         document.finishPage(page)
         // draw text on the graphics object of the page
-        // Create Page 2
-        pageInfo = PdfDocument.PageInfo.Builder(300, 600, 2).create()
-        page = document.startPage(pageInfo)
-        canvas = page.getCanvas()
-        paint = Paint()
-        paint.color = Color.BLUE
-        canvas.drawCircle(100F, 100F, 100F, paint)
-        document.finishPage(page)
+
         // write the document content
         val directory_path = Environment.getExternalStorageDirectory().path + "/laporanpdf/"
         val file = File(directory_path)
@@ -143,13 +142,41 @@ class DashboardActivity : AppCompatActivity() {
         val filePath = File(targetPdf)
         try {
             document.writeTo(FileOutputStream(filePath))
-            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Berhasil", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
             Log.e("main", "error $e")
-            Toast.makeText(this, "Something wrong: $e", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Something wrong: Izinkan aplikasi untuk akses storage di pengaturan", Toast.LENGTH_LONG).show()
         }
         // close the document
         document.close()
+    }
+
+    fun openFolder() {
+
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val uri = Uri.parse(
+            Environment.getExternalStorageDirectory().path + "/laporanpdf/"
+        )
+        intent.setDataAndType(uri, "resource/folder")
+        startActivity(Intent.createChooser(intent, "Open folder"))
+    }
+
+    private fun openFileOption() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Buka Foldernya ?")
+        builder.setMessage(
+            """
+            Pdf anda tersimpan di internal storage dalam folder laporanpdf
+        """.trimIndent()
+        )
+        builder.setPositiveButton("Ya") { _, _ ->
+            openFolder()
+        }
+        builder.setNegativeButton("Tidak") { dialog, _ -> // Do nothing
+            dialog.dismiss()
+        }
+        val alert = builder.create()
+        alert.show()
     }
 
 }
