@@ -3,18 +3,17 @@ package com.thorin.project1.laporantol
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.thorin.project1.laporantol.menu.HistoryActivity
@@ -45,7 +44,7 @@ class DashboardActivity : AppCompatActivity() {
 
         val bClickMe = findViewById<Button>(R.id.exportpdf)
         bClickMe.setOnClickListener { pref.getString("nama_user", null)?.let { createPdf(it) }
-            openFileOption()
+
         }
 
     }
@@ -95,7 +94,7 @@ class DashboardActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Apakah anda yakin ?")
         builder.setMessage(
-            """
+                """
             Anda akan keluar aplikasi setelah logout !
         """.trimIndent()
         )
@@ -116,11 +115,11 @@ class DashboardActivity : AppCompatActivity() {
         // create a new document
         val document = PdfDocument()
         // crate a page description
-        var pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
         // start a page
-        var page = document.startPage(pageInfo)
-        var canvas = page.getCanvas()
-        var paint = Paint()
+        val page = document.startPage(pageInfo)
+        val canvas = page.getCanvas()
+        val paint = Paint()
         canvas.drawText(namaUser, 80F, 50F, paint)
         canvas.drawText("""
             Nik User = ${user_nik.text as String} 
@@ -142,35 +141,49 @@ class DashboardActivity : AppCompatActivity() {
         val filePath = File(targetPdf)
         try {
             document.writeTo(FileOutputStream(filePath))
-            Toast.makeText(this, "Berhasil", Toast.LENGTH_LONG).show()
+            openFileOption()
+            //Toast.makeText(this, "Berhasil", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
             Log.e("main", "error $e")
-            Toast.makeText(this, "Something wrong: Izinkan aplikasi untuk akses storage di pengaturan", Toast.LENGTH_LONG).show()
+            openSettingOption()
+           // Toast.makeText(this, "Something wrong: Izinkan aplikasi untuk akses storage di pengaturan", Toast.LENGTH_LONG).show()
         }
         // close the document
         document.close()
     }
 
-    fun openFolder() {
-
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        val uri = Uri.parse(
-            Environment.getExternalStorageDirectory().path + "/laporanpdf/"
-        )
-        intent.setDataAndType(uri, "resource/folder")
-        startActivity(Intent.createChooser(intent, "Open folder"))
+    private fun openSetting() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", packageName, null))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun openFileOption() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Buka Foldernya ?")
+        builder.setTitle("Sukses")
         builder.setMessage(
-            """
+                """
             Pdf anda tersimpan di internal storage dalam folder laporanpdf
         """.trimIndent()
         )
+        builder.setNegativeButton("OK") { dialog, _ -> // Do nothing
+            dialog.dismiss()
+        }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun openSettingOption() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Belum di izinkan.")
+        builder.setMessage(
+                """
+            Izinkan Aplikasi Untuk Mengirim Data Ke Storage.
+        """.trimIndent()
+        )
         builder.setPositiveButton("Ya") { _, _ ->
-            openFolder()
+            openSetting()
         }
         builder.setNegativeButton("Tidak") { dialog, _ -> // Do nothing
             dialog.dismiss()
@@ -178,5 +191,6 @@ class DashboardActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
     }
+    }
 
-}
+
