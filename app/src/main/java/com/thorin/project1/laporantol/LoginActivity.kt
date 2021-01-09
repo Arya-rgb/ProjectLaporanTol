@@ -3,6 +3,7 @@ package com.thorin.project1.laporantol
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         supportActionBar?.hide()
-        val btn_log = findViewById(R.id.btn_login) as Button
+        val btn_log = findViewById<Button>(R.id.btn_login)
         val sp:SharedPreferences = getSharedPreferences("login", MODE_PRIVATE)
         val intent = intent
 
@@ -31,6 +32,7 @@ class LoginActivity : AppCompatActivity() {
         btn_log.setOnClickListener {
             val nik = id_nik.text.toString()
             val password = id_password.text.toString()
+            showLoading(true)
             // Response received from the server
             val responseListener =
                 Response.Listener<String> { response ->
@@ -49,16 +51,17 @@ class LoginActivity : AppCompatActivity() {
                             editor.putString("nik", nik) // Saving string
                             editor.putString("nama_user", nama_user) // Saving string
                             editor.apply() // commit changes}
-                            sp.edit().putBoolean("logged",true).apply();
+                            sp.edit().putBoolean("logged",true).apply()
                             this@LoginActivity.startActivity(intent)
                             finish()
-
+                            showLoading(false)
                         } else {
                             val builder = AlertDialog.Builder(this@LoginActivity)
                             builder.setMessage("Nik atau password tidak terdaftar")
                                 .setNegativeButton("Ok", null)
                                 .create()
                                 .show()
+                            showLoading(false)
                         }
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -70,4 +73,12 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            loadingProgress.visibility = View.VISIBLE
+        } else {
+            loadingProgress.visibility = View.INVISIBLE
+        }
+    }
+
 }

@@ -78,11 +78,13 @@
                 android:textSize="30sp" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
@@ -94,11 +96,13 @@
                 android:textSize="30sp" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
@@ -106,15 +110,17 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Bank BNI"
+                android:text="Bank Mandiri"
                 android:textSize="30sp" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
