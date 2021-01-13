@@ -78,16 +78,41 @@
                 android:textSize="30sp" />
 
             <EditText
+                android:id="@+id/BRITotal"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:id="@+id/BRITrans"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_htBRI"
+                android:text="Hitung"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/txt_hslBRI"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hasil"
+                    android:paddingLeft="20dp"/>
+                <TextView
+                    android:id="@+id/txt_httotalBRI"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
@@ -96,16 +121,40 @@
                 android:textSize="30sp" />
 
             <EditText
+                android:id="@+id/BCATotal"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:id="@+id/BCATrans"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_htBCA"
+                    android:text="Hitung"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/txt_hslBCA"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hasil"
+                    android:paddingLeft="20dp"/>
+                <TextView
+                    android:id="@+id/txt_httotalBCA"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
@@ -114,29 +163,56 @@
                 android:textSize="30sp" />
 
             <EditText
+                android:id="@+id/MANDIRITotal"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Masukan Jumlah Total" />
 
             <EditText
+                android:id="@+id/MANDIRITrans"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Jumlah Transaksi" />
-
-            <Button
-                android:id="@+id/hitung"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hitung total" />
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_htMANDIRI"
+                    android:text="Hitung"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/txt_hslMANDIRI"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hasil"
+                    android:paddingLeft="20dp"/>
+                <TextView
+                    android:id="@+id/txt_httotalMANDIRI"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_hitung"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hitung total"
+                android:layout_marginBottom="10dp" />
             <TextView
                 android:layout_gravity="center"
-                android:id="@+id/hasil"
+                android:id="@+id/txt_hasilTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hasil"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:layout_marginBottom="20dp"/>
 
             <Button
                 android:id="@+id/exportpdf"

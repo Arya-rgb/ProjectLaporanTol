@@ -14,12 +14,15 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.thorin.project1.laporantol.menu.HistoryActivity
 import com.thorin.project1.laporantol.menu.SetActivity
 import kotlinx.android.synthetic.main.activity_dashboard.*
 import java.io.*
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,20 +33,133 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        var pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
+        val pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
         pref.getString("nik", null)
         pref.getString("nama_user", null)
         user_nik.text = pref.getString("nik", null)
         user_nama.text = pref.getString("nama_user", null)
 
-        var today = Calendar.getInstance().time//getting date
-        var formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
-        var date = formatter.format(today)
+        val today = Calendar.getInstance().time//getting date
+        val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
+        val date = formatter.format(today)
         id_date.text = date
 
+        val htbriClick = findViewById<Button>(R.id.btn_htBRI)
+        val htbcaClick = findViewById<Button>(R.id.btn_htBCA)
+        val htmandiriClick = findViewById<Button>(R.id.btn_htMANDIRI)
+        htbriClick.setOnClickListener {
+            val briTotal = BRITotal.text.toString().trim()
+            val briTrans = BRITrans.text.toString().trim()
+            var isEmptyFields = false
+            when {
+                briTotal.isEmpty() -> {
+                    isEmptyFields = true
+                    BRITotal.error = "Field ini tidak boleh kosong"
+                }
+                briTrans.isEmpty() -> {
+                    isEmptyFields = true
+                    BRITrans.error = "Field ini tidak boleh kosong"
+                }
+            }
+            if (!isEmptyFields) {
+                val briTotalht = Integer.parseInt(BRITotal.text.toString())
+                val briTransht = Integer.parseInt(BRITrans.text.toString())
+                val resultBri = briTransht * 1500 + briTotalht
+                resultBri.toDouble()
+                val COUNTRY = "ID"
+                 val LANGUAGE = "in"
+                 txt_hslBRI.text = NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY))
+                     .format(resultBri)
+                txt_httotalBRI.text = resultBri.toString()
+
+            }
+        }
+
+        htbcaClick.setOnClickListener {
+            val bcaTotal = BCATotal.text.toString().trim()
+            val bcaTrans = BCATrans.text.toString().trim()
+            var isEmptyFields = false
+            when {
+                bcaTotal.isEmpty() -> {
+                    isEmptyFields = true
+                    BRITotal.error = "Field ini tidak boleh kosong"
+                }
+                bcaTrans.isEmpty() -> {
+                    isEmptyFields = true
+                    BRITrans.error = "Field ini tidak boleh kosong"
+                }
+            }
+            if (!isEmptyFields) {
+                val bcaTotalht = Integer.parseInt(BCATotal.text.toString())
+                val bcaTransht = Integer.parseInt(BCATrans.text.toString())
+                val resultBca = bcaTransht * 1500 + bcaTotalht
+                resultBca.toDouble()
+                val COUNTRY = "ID"
+                val LANGUAGE = "in"
+                txt_hslBCA.text = NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY))
+                    .format(resultBca)
+                txt_httotalBCA.text = resultBca.toString()
+            }
+        }
+        htmandiriClick.setOnClickListener {
+            val mandiriTotal = MANDIRITotal.text.toString().trim()
+            val mandiriTrans = MANDIRITrans.text.toString().trim()
+            var isEmptyFields = false
+            when {
+                mandiriTotal.isEmpty() -> {
+                    isEmptyFields = true
+                    MANDIRITotal.error = "Field ini tidak boleh kosong"
+                }
+                mandiriTrans.isEmpty() -> {
+                    isEmptyFields = true
+                    MANDIRITrans.error = "Field ini tidak boleh kosong"
+                }
+            }
+            if (!isEmptyFields) {
+                val mandiriTotalht = Integer.parseInt(MANDIRITotal.text.toString())
+                val mandiriTransht = Integer.parseInt(MANDIRITrans.text.toString())
+                val resultMandiri = mandiriTransht * 1500 + mandiriTotalht
+                resultMandiri.toDouble()
+                val COUNTRY = "ID"
+                val LANGUAGE = "in"
+                txt_hslMANDIRI.text = NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY))
+                   .format(resultMandiri)
+                txt_httotalMANDIRI.text =  resultMandiri.toString()
+            }
+        }
+        btn_hitung.setOnClickListener {
+            val briTotals = txt_httotalBRI.text.toString().trim()
+            val bcaTotals = txt_httotalBCA.text.toString().trim()
+            val mandiriTotals = txt_httotalMANDIRI.text.toString().trim()
+            var isEmptyFields = false
+            when {
+                briTotals.isEmpty() -> {
+                    isEmptyFields = true
+                    Toast.makeText(applicationContext, "Total BRI Belum Di Hitung !", Toast.LENGTH_LONG).show()
+                }
+                bcaTotals.isEmpty() -> {
+                    isEmptyFields = true
+                        Toast.makeText(applicationContext, "Total BCA Belum Di Hitung !", Toast.LENGTH_LONG).show()
+                }
+                mandiriTotals.isEmpty() -> {
+                    isEmptyFields = true
+                    Toast.makeText(applicationContext, "Total Mandiri Belum Di Hitung !", Toast.LENGTH_LONG).show()
+                }
+            }
+            if (!isEmptyFields) {
+                val totalBriht = Integer.parseInt(txt_httotalBRI.text.toString())
+                val totalBcaht = Integer.parseInt(txt_httotalBCA.text.toString())
+                val totalMandiriht = Integer.parseInt(txt_httotalMANDIRI.text.toString())
+                val resultTotal = totalBriht + totalBcaht + totalMandiriht
+                val COUNTRY = "ID"
+                val LANGUAGE = "in"
+                txt_hasilTotal.text = NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(resultTotal)
+            }
+        }
 
         val bClickMe = findViewById<Button>(R.id.exportpdf)
-        bClickMe.setOnClickListener { pref.getString("nama_user", null)?.let { createPdf(it) }
+        bClickMe.setOnClickListener {
+            pref.getString("nama_user", null)?.let { createPdf(it) }
 
         }
 
@@ -94,7 +210,7 @@ class DashboardActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Apakah anda yakin ?")
         builder.setMessage(
-                """
+            """
             Anda akan keluar aplikasi setelah logout !
         """.trimIndent()
         )
@@ -118,14 +234,16 @@ class DashboardActivity : AppCompatActivity() {
         val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
         // start a page
         val page = document.startPage(pageInfo)
-        val canvas = page.getCanvas()
+        val canvas = page.canvas
         val paint = Paint()
         canvas.drawText(namaUser, 80F, 50F, paint)
-        canvas.drawText("""
+        canvas.drawText(
+            """
             Nik User = ${user_nik.text as String} 
             
             Tanggal Sekarang = $dateLaporan
-        """.trimIndent(), 80F, 70F, paint)
+        """.trimIndent(), 80F, 70F, paint
+        )
         //canvas.drawt
         // finish the page
         document.finishPage(page)
@@ -146,15 +264,17 @@ class DashboardActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Log.e("main", "error $e")
             openSettingOption()
-           // Toast.makeText(this, "Something wrong: Izinkan aplikasi untuk akses storage di pengaturan", Toast.LENGTH_LONG).show()
+            // Toast.makeText(this, "Something wrong: Izinkan aplikasi untuk akses storage di pengaturan", Toast.LENGTH_LONG).show()
         }
         // close the document
         document.close()
     }
 
     private fun openSetting() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", packageName, null))
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
@@ -163,7 +283,7 @@ class DashboardActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Sukses")
         builder.setMessage(
-                """
+            """
             Pdf anda tersimpan di internal storage dalam folder laporanpdf
         """.trimIndent()
         )
@@ -178,7 +298,7 @@ class DashboardActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Belum di izinkan.")
         builder.setMessage(
-                """
+            """
             Izinkan Aplikasi Untuk Mengirim Data Ke Storage.
         """.trimIndent()
         )
@@ -191,6 +311,8 @@ class DashboardActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
     }
-    }
+
+
+}
 
 
