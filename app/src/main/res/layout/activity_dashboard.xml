@@ -69,6 +69,20 @@
                 android:text="nama"
                 android:textSize="30sp"
                 android:visibility="gone" />
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Shift Laporan"
+                android:textSize="30sp" />
+            <Spinner
+                android:id="@+id/shifspnr"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown"
+                android:entries="@array/shift_entries"/>
 
             <TextView
                 android:layout_marginTop="10dp"

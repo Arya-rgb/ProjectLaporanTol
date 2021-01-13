@@ -47,6 +47,7 @@ class DashboardActivity : AppCompatActivity() {
         val htbriClick = findViewById<Button>(R.id.btn_htBRI)
         val htbcaClick = findViewById<Button>(R.id.btn_htBCA)
         val htmandiriClick = findViewById<Button>(R.id.btn_htMANDIRI)
+
         htbriClick.setOnClickListener {
             val briTotal = BRITotal.text.toString().trim()
             val briTrans = BRITrans.text.toString().trim()
@@ -151,6 +152,7 @@ class DashboardActivity : AppCompatActivity() {
                 val totalBcaht = Integer.parseInt(txt_httotalBCA.text.toString())
                 val totalMandiriht = Integer.parseInt(txt_httotalMANDIRI.text.toString())
                 val resultTotal = totalBriht + totalBcaht + totalMandiriht
+                resultTotal.toDouble()
                 val COUNTRY = "ID"
                 val LANGUAGE = "in"
                 txt_hasilTotal.text = NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(resultTotal)
@@ -225,6 +227,8 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun createPdf(namaUser: String) {
+        val COUNTRY = "ID"
+        val LANGUAGE = "in"
         val today = Calendar.getInstance().time//getting date
         val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
         val dateLaporan = formatter.format(today)
@@ -236,19 +240,38 @@ class DashboardActivity : AppCompatActivity() {
         val page = document.startPage(pageInfo)
         val canvas = page.canvas
         val paint = Paint()
-        canvas.drawText(namaUser, 80F, 50F, paint)
+        canvas.drawText("Tanggal = $dateLaporan", 80F, 50F, paint)
         canvas.drawText(
             """
             Nik User = ${user_nik.text as String} 
-            
-            Tanggal Sekarang = $dateLaporan
         """.trimIndent(), 80F, 70F, paint
         )
+        canvas.drawText("Nama User = $namaUser", 80F, 90F, paint)
+        canvas.drawText("Shift Laporan = ${shifspnr.selectedItem}", 80F, 110F, paint)
+        //bank BRI
+        val briTotal = BRITotal.text.toString().toDouble()
+        canvas.drawText("Bank BRI", 80F, 140F, paint)
+        canvas.drawText("Jumlah Total = ${NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(briTotal)}", 80F, 160F, paint)
+        canvas.drawText("Jumlah Transaksi = ${BRITrans.text}", 80F, 180F, paint)
+        canvas.drawText("Hasil = ${txt_hslBRI.text as String}", 80F, 200F, paint)
+        //bank BCA
+        val bcaTotal = BCATotal.text.toString().toDouble()
+        canvas.drawText("Bank BCA", 80F, 230F, paint)
+        canvas.drawText("Jumlah Total = ${NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(bcaTotal)}", 80F, 250F, paint)
+        canvas.drawText("Jumlah Transaksi = ${BCATrans.text}", 80F, 270F, paint)
+        canvas.drawText("Hasil = ${txt_hslBCA.text as String}", 80F, 290F, paint)
+        //Bank Mandiri
+        val mandiriTotal = MANDIRITotal.text.toString().toDouble()
+        canvas.drawText("Bank Mandiri", 80F, 320F, paint)
+        canvas.drawText("Jumlah Total = ${NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(mandiriTotal)}", 80F, 340F, paint)
+        canvas.drawText("Jumlah Transaksi = ${MANDIRITrans.text}", 80F, 360F, paint)
+        canvas.drawText("Hasil = ${txt_hslMANDIRI.text as String}", 80F, 380F, paint)
+        //Total
+        canvas.drawText("Total Semua Bank = ${txt_hasilTotal.text as String}", 80F, 410F, paint)
         //canvas.drawt
         // finish the page
         document.finishPage(page)
         // draw text on the graphics object of the page
-
         // write the document content
         val directory_path = Environment.getExternalStorageDirectory().path + "/laporanpdf/"
         val file = File(directory_path)
@@ -269,6 +292,7 @@ class DashboardActivity : AppCompatActivity() {
         // close the document
         document.close()
     }
+
 
     private fun openSetting() {
         val intent = Intent(
