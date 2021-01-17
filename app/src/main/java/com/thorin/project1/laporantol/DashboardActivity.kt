@@ -8,18 +8,26 @@ import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Response
+import com.android.volley.toolbox.Volley
 import com.thorin.project1.laporantol.menu.HistoryActivity
 import com.thorin.project1.laporantol.menu.SetActivity
 import kotlinx.android.synthetic.main.activity_dashboard.*
+import kotlinx.android.synthetic.main.activity_dashboard.loadingProgress
+import kotlinx.android.synthetic.main.activity_login.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -161,10 +169,86 @@ class DashboardActivity : AppCompatActivity() {
 
         val bClickMe = findViewById<Button>(R.id.exportpdf)
         bClickMe.setOnClickListener {
-            pref.getString("nama_user", null)?.let { createPdf(it) }
+            val htTotal = txt_hasilTotal.text.toString().trim()
+            var isEmptyFields = false
+            when {
+                htTotal.isEmpty() -> {
+                    isEmptyFields = true
+                    Toast.makeText(applicationContext, "Total Belum Di Hitung !", Toast.LENGTH_LONG).show()
+                }
+
+            }
+            if (!isEmptyFields) {
+                val today = Calendar.getInstance().time//getting date
+                val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
+                val dateLaporan = formatter.format(today)
+                val kodelaporan = "${dateLaporan}+${shifspnr.selectedItem as String}"
+                val COUNTRY = "ID"
+                val LANGUAGE = "in"
+                val briTotal = BRITotal.text.toString().toDouble()
+                val bcaTotal = BCATotal.text.toString().toDouble()
+                val mandiriTotal = MANDIRITotal.text.toString().toDouble()
+                val nik = user_nik.text as String
+                val namauser = user_nama.text as String
+                val tanggal_laporan = dateLaporan
+                val shift_laporan = shifspnr.selectedItem as String
+                val jmlh_total_bri =
+                    NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(briTotal)
+                val jmlh_trans_bri = BRITrans.text.toString()
+                val hasil_ht_bri = txt_hslBRI.text as String
+                val jmlh_total_bca =
+                    NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(bcaTotal)
+                val jmlh_trans_bca = BCATrans.text.toString()
+                val hasil_ht_bca = txt_hslBCA.text as String
+                val jmlh_total_mandri =
+                    NumberFormat.getCurrencyInstance(Locale(LANGUAGE, COUNTRY)).format(mandiriTotal)
+                val jmlh_trans_mandri = MANDIRITrans.text.toString()
+                val hasil_ht_mandiri = txt_hslMANDIRI.text as String
+                val hasil_keseluruhan = txt_hasilTotal.text as String
+                var yourCountDownTimer = object: CountDownTimer(30000, 1000) {
+                    override fun onTick(millisUntilFinished:Long) {
+                        loadingProgress.visibility = View.VISIBLE
+                    }
+                    override fun onFinish() {
+                        loadingProgress.visibility = View.INVISIBLE
+                        alertTooLong()
+                        cancel()
+                    }
+                }.start()
+
+                val responseListener = Response.Listener<String> { response ->
+                    try {
+                        val jsonResponse = JSONObject(response)
+                        val success = jsonResponse.getBoolean("success")
+                        if (success) {
+                            yourCountDownTimer.cancel()
+                            loadingProgress.visibility = View.INVISIBLE
+                            pref.getString("nama_user", null)?.let { createPdf(it) }
+
+                        } else {
+                            yourCountDownTimer.cancel()
+                            loadingProgress.visibility = View.INVISIBLE
+                            val builder = AlertDialog.Builder(this@DashboardActivity)
+                            builder.setMessage("Register Failed")
+                                .setNegativeButton("Retrybh gt", null)
+                                .create()
+                                .show()
+
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+                val historyRequest = HistoryRequest(
+                    kodelaporan, nik, namauser, tanggal_laporan, shift_laporan, jmlh_total_bri, jmlh_trans_bri,
+                    hasil_ht_bri, jmlh_total_bca, jmlh_trans_bca, hasil_ht_bca, jmlh_total_mandri,
+                    jmlh_trans_mandri, hasil_ht_mandiri, hasil_keseluruhan, responseListener
+                )
+                val queue = Volley.newRequestQueue(this@DashboardActivity)
+                queue.add(historyRequest)
+            }
 
         }
-
     }
 
     override fun onBackPressed() {
@@ -283,6 +367,7 @@ class DashboardActivity : AppCompatActivity() {
         try {
             document.writeTo(FileOutputStream(filePath))
             openFileOption()
+
             //Toast.makeText(this, "Berhasil", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
             Log.e("main", "error $e")
@@ -318,6 +403,21 @@ class DashboardActivity : AppCompatActivity() {
         alert.show()
     }
 
+    private fun alertTooLong() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Server Tidak Merespon")
+        builder.setMessage(
+            """
+            Silahkan Cek koneksi anda dan coba lagi.
+        """.trimIndent()
+        )
+        builder.setNegativeButton("OK") { dialog, _ -> // Do nothing
+            dialog.dismiss()
+        }
+        val alert = builder.create()
+        alert.show()
+    }
+
     private fun openSettingOption() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Belum di izinkan.")
@@ -335,8 +435,13 @@ class DashboardActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
     }
-
-
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            loadingProgress.visibility = View.VISIBLE
+        } else {
+            loadingProgress.visibility = View.INVISIBLE
+        }
+    }
 }
 
 

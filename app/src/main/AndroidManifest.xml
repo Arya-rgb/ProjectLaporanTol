@@ -15,10 +15,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LaporanTol">
-        <activity android:name=".menu.SetActivity" />
-        <activity android:name=".menu.HistoryActivity" />
-        <activity android:name=".DashboardActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".menu.SetActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".menu.HistoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".DashboardActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
