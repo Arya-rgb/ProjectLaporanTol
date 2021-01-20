@@ -3,6 +3,7 @@ package com.thorin.project1.laporantol
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
@@ -224,13 +225,12 @@ class DashboardActivity : AppCompatActivity() {
                             yourCountDownTimer.cancel()
                             loadingProgress.visibility = View.INVISIBLE
                             pref.getString("nama_user", null)?.let { createPdf(it) }
-
                         } else {
                             yourCountDownTimer.cancel()
                             loadingProgress.visibility = View.INVISIBLE
                             val builder = AlertDialog.Builder(this@DashboardActivity)
-                            builder.setMessage("Register Failed")
-                                .setNegativeButton("Retrybh gt", null)
+                            builder.setMessage("Gagal Terhubung Ke Server")
+                                .setNegativeButton("Silahkan Cek Koneksi Internet Anda", null)
                                 .create()
                                 .show()
 
@@ -249,6 +249,7 @@ class DashboardActivity : AppCompatActivity() {
             }
 
         }
+
     }
 
     override fun onBackPressed() {
@@ -435,13 +436,7 @@ class DashboardActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
     }
-    private fun showLoading(state: Boolean) {
-        if (state) {
-            loadingProgress.visibility = View.VISIBLE
-        } else {
-            loadingProgress.visibility = View.INVISIBLE
-        }
-    }
+
 }
 
 
