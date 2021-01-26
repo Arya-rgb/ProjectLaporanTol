@@ -183,7 +183,7 @@ class DashboardActivity : AppCompatActivity() {
                 val today = Calendar.getInstance().time//getting date
                 val formatter = SimpleDateFormat("dd-MM-yyyy")//formating according to my need
                 val dateLaporan = formatter.format(today)
-                val kodelaporan = "${dateLaporan}+${shifspnr.selectedItem as String}"
+                val kodelaporan = "$dateLaporan ${shifspnr.selectedItem as String}"
                 val COUNTRY = "ID"
                 val LANGUAGE = "in"
                 val briTotal = BRITotal.text.toString().toDouble()
@@ -363,7 +363,7 @@ class DashboardActivity : AppCompatActivity() {
         if (!file.exists()) {
             file.mkdirs()
         }
-        val targetPdf = directory_path + "Laporan-$dateLaporan.pdf"
+        val targetPdf = directory_path + "Laporan-$dateLaporan-${shifspnr.selectedItem}.pdf"
         val filePath = File(targetPdf)
         try {
             document.writeTo(FileOutputStream(filePath))

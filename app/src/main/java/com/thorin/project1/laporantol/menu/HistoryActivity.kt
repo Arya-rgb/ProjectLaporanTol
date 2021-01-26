@@ -24,6 +24,7 @@ class HistoryActivity : AppCompatActivity() {
         actionbar?.title= "History Laporan"
         actionbar?.setDisplayHomeAsUpEnabled(true)
         webView.settings.javaScriptEnabled = true
+
         webView.webViewClient = object : WebViewClient() {
 
 
@@ -86,6 +87,11 @@ class HistoryActivity : AppCompatActivity() {
     fun moveBack() {
         val moveIntent = Intent(this, DashboardActivity::class.java)
         startActivity(moveIntent)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
 }
